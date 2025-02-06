@@ -1,0 +1,2 @@
+import"./assets/modulepreload-polyfill-B5Qt9EMX.js";/* empty css                      */import{i as o}from"./assets/vendor-A92OCY9B.js";o.show({message:"Please choose a date in the future",position:"topRight",messageColor:"white",backgroundColor:"red"});o.show({message:"Please choose a date in the future",position:"topRight",messageColor:"white",backgroundColor:"green"});
+//# sourceMappingURL=2-snackbar.js.map
