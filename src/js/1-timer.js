@@ -24,43 +24,60 @@ const refs = {
   minutes : document.querySelector("[data-minutes]"),
   seconds : document.querySelector("[data-seconds]"),
 }
-refs.hours.textContent="02";
+
 const time ={
-  start(){
-    
+  intervalId:null,
+  delay:0,
+  start(int){
+    refs.button.ariaDisabled=true;
+    this.intervalId=setInterval(()=>{
+      const timeSet = convertMs(int-this.delay*1000);
+      // console.log(timeSet);
+      refs.days.textContent=timeSet.days.toString().padStart(2, "0");
+      refs.hours.textContent=timeSet.hours.toString().padStart(2, "0");
+      refs.minutes.textContent=timeSet.minutes.toString().padStart(2, "0");
+      refs.seconds.textContent=timeSet.seconds.toString().padStart(2, "0");
+      this.delay++;
+      if ((this.delay*1000 -int)>=0){
+        this.stop();
+        refs.button.disabled=false;
+      }
+    },1000);
   },
   stop(){
-
+    clearInterval(this.intervalId);
   }
 };
 
-// console.log(selectedDates[0]);
+const myInput = document.querySelector("#datetime-picker");
+const fp = flatpickr(myInput, options);
 
 refs.button.addEventListener("click", ()=>{
-  time.start();
+  time.stop();
+  const timeMS = fp.selectedDates[0].getTime();
   console.log(fp.selectedDates[0]);
-  // console.log(options.onClose());
+  
+  
+  const timeNow = Date.now();
+  const interval = timeMS-timeNow;
+
+  if ((interval)>0){
+    refs.button.disabled=true;
+    time.start(interval);
+  } else {
+    iziToast.show({
+      message:"Please choose a date in the future",
+      position:"topRight",
+      messageColor: 'white',
+      backgroundColor: "red",
+    });
+  };
 })
 
 // import pathSuccessIcon from "./img/success-icon.svg";
 // import pathErrorIcon from "./img/error-icon.svg";
 
 // const iconUrl = status ? pathSuccessIcon : pathErrorIcon;
-const myInput = document.querySelector("#datetime-picker");
-const fp = flatpickr(myInput, options);
-// options.onClose(fr);
-// console.log(options.userSelectedDate);
-
-
-
-iziToast.show({
-  message:"Please choose a date in the future",
-  position:"topRight",
-  messageColor: 'white',
-  backgroundColor: "red",
-});
-
-// console.log(fp.selectedDates[0]);
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -78,10 +95,3 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
  
-function addLeadingZero(value){
-  // padStart()
-}
-console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
-// console.log(fp.currentMonth);
